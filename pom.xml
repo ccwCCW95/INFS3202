@@ -35,11 +35,12 @@
         </dependency>
 
         <!-- Hot Start -->
-        <!--<dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
+            <version>2.1.2.RELEASE</version>
             <optional>true</optional>
-        </dependency>-->
+        </dependency>
 
         <!-- Mybatis -->
         <dependency>
@@ -62,30 +63,16 @@
             <version>2.6.2</version>
         </dependency>
 
-        <!-- JSP -->
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-jasper</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
-        <resources>
-            <!-- JSP -->
-            <resource>
-                <directory>src/main/webapp</directory>
-                <targetPath>META-INF/resources</targetPath>
-                <includes>
-                    <include>*.*</include>
-                </includes>
-            </resource>
-        </resources>
-
-
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                </configuration>
             </plugin>
 
             <!-- Mybatis Auto-Generator -->
@@ -105,19 +92,6 @@
                     </dependency>
                 </dependencies>
             </plugin>
-
-            <!-- Spring Hot Start -->
-            <!--<plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>springloaded</artifactId>
-                        <version>1.2.6.RELEASE</version>
-                    </dependency>
-                </dependencies>
-            </plugin>-->
 
         </plugins>
     </build>
