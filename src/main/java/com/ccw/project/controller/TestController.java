@@ -39,4 +39,25 @@ public class TestController {
         model.addAttribute("testInfos", returnList);
         return "boot";
     }
+
+    @RequestMapping("/easy")
+    public String easy(Model model){
+//        List<Test> returnList = testService.getAllInfo();
+//        model.addAttribute("testInfos", returnList);
+        return "easy";
+    }
+
+    @RequestMapping("/testlogin")
+    public String testlogin(Model model){
+//        List<Test> returnList = testService.getAllInfo();
+//        model.addAttribute("testInfos", returnList);
+        return "testlogin";
+    }
+
+    @RequestMapping("/testnav")
+    public String testnav(Model model){
+//        List<Test> returnList = testService.getAllInfo();
+//        model.addAttribute("testInfos", returnList);
+        return "testnav";
+    }
 }
