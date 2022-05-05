@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<html lang="en">
+<head>
+    <meta content="text/html;" charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-3.4.1/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-3.4.1/css/bootstrap-theme.min.css}" />
+
+    <link href="https://fastly.jsdelivr.net/npm/@bootcss/v3.bootcss.com@1.0.35/examples/signin/signin.css" rel="stylesheet">
+
+
+    <title>Registration</title>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+      <form action="#" th:action="@{/ccw/login/regist}" th:object="${user}" method="post">
+        <h2 class="form-signin-heading">Please sign up</h2>
+
+        <div class="form-group">
+          <label for="InputUserName">UserName</label>
+          <input th:field="*{username}" class="form-control" type="text" placeholder="UserName" id="username" required autofocus>
+          <p id="errorUser" style="color: red"></p>
+        </div>
+
+        <div class="form-group">
+          <label for="InputPassword">Password</label>
+          <input th:field="*{password}" type="password" class="form-control" id="password" placeholder="Password">
+          <p id="errorPassword" style="color: red"></p>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input th:field="*{email}" type="email" class="form-control" id="email" placeholder="name@example.com">
+          <p id="errorEmail" style="color: red"></p>
+        </div>
+
+        <button id="cancel" type="button" class="btn btn-info">Cancel</button>
+        <button id="submit" type="submit" class="btn btn-primary">Submit</button>
+      </form>
+
+    </div>
+
+<script src="https://fastly.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+<script th:src="@{/bootstrap-3.4.1/js/bootstrap.min.js}"></script>
+
+<script th:inline="javascript">
+
+    function checkUserName(){
+
+        $("#errorUser").text("");
+
+        var inputUserName = $("#username").val();
+
+        if(inputUserName.length == 0){
+            $("#errorUser").text("UserName should not be empty!");
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    $("#username").blur(function() {
+        if(checkUserName()){
+            $.ajax({
+                url : "/ccw/login/registration/checkusername",
+                data : {
+                    username : $("#username").val()
+                },
+                type : "post",
+                dataType : "json",
+
+                success : function(response) {
+                    if (response.errMeg == "0") {
+
+                    } else if (response.errMeg == "1") {
+                        $("#errorUser").text("This username has been used, please change another one!");
+                    }
+                },
+
+                error : function(response, status, xhr) {
+                    alert("fail");
+                }
+            });
+        }
+
+    });
+
+    function checkPassword(){
+        $("#errorPassword").text("");
+        var inputPwd = $("#password").val();
+
+        if(inputPwd.length == 0 || inputPwd.length < 6 || inputPwd.length > 12){
+            $("#errorPassword").text("The length of password should be between 6 and 12!");
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    $("#password").blur(function() {
+        checkPassword()
+    });
+
+    function checkEmail(){
+        $("#errorEmail").text("");
+        var inputEmail = $("#email").val();
+
+        if(inputEmail.length == 0){
+            $("#errorEmail").text("Email should not be empty!");
+            return false;
+        }else {
+            return true;
+        }
+    }
+
+    $("#email").blur(function() {
+        if(checkEmail()){
+            $.ajax({
+                url : "/ccw/login/registration/checkemail",
+                data : {
+                    email : $("#email").val()
+                },
+                type : "post",
+                dataType : "json",
+
+                success : function(response) {
+                    if (response.errMeg == "0") {
+
+                    } else if (response.errMeg == "1") {
+                        $("#errorEmail").text("This email has been used, please change another one!");
+                    }
+                },
+
+                error : function(response, status, xhr) {
+                    alert("fail");
+                }
+            });
+        }
+
+    });
+
+    $('#cancel').on('click', function () {
+        window.location.href = "/ccw/login";
+      });
+
+    $('#submit').on('click', function () {
+        // check each info is valid
+        if (checkUserName() && checkPassword() && checkEmail()){
+            return true;
+        }else {
+            return false;
+        }
+      });
+
+
+</script>
+</body>
+</html>

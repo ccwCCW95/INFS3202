@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<html lang="en">
+<head>
+    <meta content="text/html;" charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-3.4.1/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-3.4.1/css/bootstrap-theme.min.css}" />
+
+    <link href="https://fastly.jsdelivr.net/npm/@bootcss/v3.bootcss.com@1.0.35/examples/signin/signin.css" rel="stylesheet">
+
+
+    <title>Main</title>
+
+</head>
+
+<body>
+
+    <div style="background-color: #0c7cd5; width: 100%; height: 60px;">
+        <div class="container-fluid">
+            <div style="width: 15%; float: left">
+                <font>Welcome,<h5 th:text="${session.User.username}"></h5></font>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <div style="width: 15%; float: left">
+                <font>Today's PM25 : <h5 th:text="${session.pm25}"></h5></font>
+            </div>
+
+            <ul class="nav navbar-nav pull-right">
+                <li><button id="onlinecount" class="btn btn-info" type="button">Online</button></li>
+                <li><button id="profile" class="btn btn-info" type="button">Profile</button></li>
+                <li><button id="signout" class="btn btn-danger" type="button">Sign out</button></li>
+            </ul>
+        </div>
+    </div>
+
+    <br />
+
+    <button id="postnewquestion" type="button" class="btn btn-success btn-lg">Post a new question</button>
+
+    <div></div>
+
+    <div class="form-group" style="width: 20%; margin-top: 10px; float: left">
+        <input id="qtsearchbox" name="KeyWord" class="form-control mr-sm-2" type="text" placeholder="Search Question">
+    </div>
+    <button type="button" class="btn btn-default" style="margin-top: 10px">Search</button>
+
+    <div style="margin-top: 20px"></div>
+
+    <div style="width: 30%">
+
+        <div th:fragment="questionlist" class="questionlist" style="width: 100%; height: 100%; margin-top: 20px; margin-left:5px; float: left; overflow-y: scroll; max-height: 500px">
+            <ul class="list-group" th:if="${not #lists.isEmpty(session.questions)}" th:each="item : ${session.questions}">
+                <button type="button" class="questions list-group-item list-group-item-action" style="padding: 30px 10px" th:text="${item.title}" th:onclick="showQuestion([[${item.id}]])" ></button>
+            </ul>
+        </div>
+    </div>
+    &nbsp;&nbsp;
+    <div class="pull-right" style="width: 69%; margin-top: 20px; float: left; height: 500px">
+        <div style="height: 49%; background-color: white">
+            &nbsp;&nbsp;
+            <h3 id="questiontitle"></h3><br/>
+            <h4 id="questionauthor" style="color: red"></h4><br/>
+            <h4 id="questioncontent"></h4><br/>
+            <input id="commentcontent" type="text" class="form-control pull-right" aria-label="Small" aria-describedby="inputGroup-sizing-sm" style="width: 30%; float: right">
+            <button id="addcomments" class="btn btn-danger pull-right" type="button" style="margin-right: 5px;">Add Comments</button>
+        </div>
+
+        <div style="height: 49%; overflow-y: scroll; margin-top: 5px" class="comments" th:fragment="commentors">
+            <ul style="margin-bottom: 5px" class="list-group" th:if="${not #lists.isEmpty(commentors)}" th:each="commentor, iterStat : ${commentors}">
+                <li class="list-group-item">
+                    <tr>
+                        <td th:text="${iterStat.index}"></td>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <td th:text="${commentor.c_name}"></td>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <td th:text="${commentor.content}"></td>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <td th:text="${commentor.rating}"></td>&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        <td><button class="btn btn-info pull-right" type="button" style="margin-right: 5px; margin-bottom: 5px" th:onclick="addRating([[${commentor.id}]], [[${commentor.rating}]])">Good!</button></td>
+                    </tr>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+<script src="https://fastly.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+<script th:src="@{/bootstrap-3.4.1/js/bootstrap.min.js}"></script>
+
+<script th:inline="javascript">
+
+    var showQuestionId;
+
+    $("#qtsearchbox").keyup(function(){
+
+        $.ajax({
+            url : "/ccw/main/searchlikely",
+            data : {
+                keyword : $("#qtsearchbox").val()
+            },
+            type : "post",
+
+            success : function(response) {
+                $(".questionlist").html(response)
+            },
+
+            error : function(response, status, xhr) {
+                alert("questionlist fail");
+            }
+        });
+
+
+
+    });
+
+    $('#onlinecount').on('click', function () {
+        $.ajax({
+                url : "/ccw/main/onlinecount",
+
+                type : "post",
+                dataType : "json",
+
+                success : function(response) {
+                    if (response.errMeg == "0") {
+                        alert("Total online users: " + response.count);
+                    } else if (response.errMeg == "1") {
+                        alert("error");
+                    }
+                },
+
+                error : function(response, status, xhr) {
+                    alert("fail");
+                }
+            });
+      });
+
+
+    $('#profile').on('click', function () {
+        window.location.href = "/ccw/main/profile";
+      });
+
+    $('#signout').on('click', function () {
+        window.location.href = "/ccw/login/signout";
+      });
+
+    function showQuestion(questionId){
+        showQuestionId = questionId;
+        $.ajax({
+                url : "/ccw/main/showQuestion",
+                data : {
+                    questionId : questionId
+                },
+                type : "post",
+                dataType : "json",
+
+                success : function(response) {
+                    if (response.errMeg == "0") {
+                        // show question details
+                        $("#questiontitle").text(response.questiontitle);
+                        $("#questionauthor").text(response.questionauthor);
+                        $("#questioncontent").text(response.questioncontent);
+                    } else if (response.errMeg == "1") {
+                        alert("error");
+                    }
+                },
+
+                error : function(response, status, xhr) {
+                    alert("fail");
+                }
+            });
+
+        $.ajax({
+                url : "/ccw/main/showComents",
+                data : {
+                    questionId : questionId
+                },
+                type : "post",
+
+                success : function(response) {
+                    $(".comments").html(response)
+                },
+
+                error : function(response, status, xhr) {
+                    alert("comments fail");
+                }
+            });
+    }
+
+    $('#postnewquestion').on('click', function () {
+        window.location.href = "/ccw/main/postquestion";
+      });
+
+    $('#addcomments').on('click', function () {
+        $.ajax({
+                url : "/ccw/main/addcomments",
+                data : {
+                    qId : showQuestionId,
+                    content : $("#commentcontent").val()
+                },
+                type : "post",
+
+                success : function(response) {
+                    $(".comments").html(response)
+                },
+
+                error : function(response, status, xhr) {
+                    alert("add comments fail");
+                }
+            });
+      });
+
+    function addRating(commentId, previousRating){
+        $.ajax({
+            url : "/ccw/main/addrating",
+            data : {
+                commentId : commentId,
+                previousRating : previousRating,
+                questionId : showQuestionId
+            },
+            type : "post",
+
+            success : function(response) {
+                $(".comments").html(response)
+            },
+
+            error : function(response, status, xhr) {
+                alert("comments fail");
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

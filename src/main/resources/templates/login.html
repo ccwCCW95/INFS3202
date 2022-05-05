@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<html lang="en">
+<head>
+    <meta content="text/html;" charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-3.4.1/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-3.4.1/css/bootstrap-theme.min.css}" />
+
+    <link href="https://fastly.jsdelivr.net/npm/@bootcss/v3.bootcss.com@1.0.35/examples/signin/signin.css" rel="stylesheet">
+
+
+    <title>Login</title>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+      <form class="form-signin" action="#" th:action="@{/ccw/login/submit}" th:object="${user}" method="post">
+        <h2 class="form-signin-heading">Please sign in</h2>
+
+        <label for="inputUsername" class="sr-only">Username</label>
+        <input th:field="*{username}" type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
+        <p id="errorUser" style="color: red"></p>
+
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input th:field="*{password}" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <p id="errorPassword" style="color: red"></p>
+
+        <div class="checkbox">
+          <label>
+            <input th:field="*{rememberme}" id="rememberme" type="checkbox" value="remember-me"> Remember me
+          </label>
+        </div>
+        <button id="signin" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <button id="signup" class="btn btn-lg btn-info btn-block" type="button">Sign up</button>
+      </form>
+
+    </div>
+
+<script src="https://fastly.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+<script th:src="@{/bootstrap-3.4.1/js/bootstrap.min.js}"></script>
+
+<script th:inline="javascript">
+
+    var checkUserName = false;
+    var checkPassword = false;
+
+    $("#inputUsername").blur(function() {
+        $("#errorUser").text("");
+        $.ajax({
+            url : "/ccw/login/checkusername",
+            data : {
+                username : $("#inputUsername").val()
+            },
+            type : "post",
+            dataType : "json",
+
+            success : function(response) {
+                if (response.errMeg == "0") {
+                    checkUserName = true;
+                } else if (response.errMeg == "1") {
+                    $("#errorUser").text("This user is not exist, please go to registration page!");
+                    checkUserName = false;
+                }
+            },
+
+            error : function(response, status, xhr) {
+                alert("fail");
+            }
+        });
+    });
+
+    $("#inputPassword").blur(function() {
+        $("#errorPassword").text("");
+        $.ajax({
+            url : "/ccw/login/checkpassword",
+            data : {
+                username : $("#inputUsername").val(),
+                password : $("#inputPassword").val()
+            },
+            type : "post",
+            dataType : "json",
+
+            success : function(response) {
+                if (response.errMeg == "0") {
+                    checkPassword = true;
+                } else if (response.errMeg == "1") {
+                    $("#errorPassword").text("This password is not correct, please try again!");
+                    checkPassword = false;
+                }
+            },
+
+            error : function(response, status, xhr) {
+                alert("fail");
+            }
+        });
+    });
+
+    $('#signin').on('click', function () {
+
+        // check each info is valid
+        if (checkUserName && checkPassword){
+            return true;
+        }else {
+            return false;
+        }
+      });
+
+    $('#signup').on('click', function () {
+        window.location.href = "/ccw/login/registration";
+      });
+
+</script>
+</body>
+</html>
