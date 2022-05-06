@@ -17,18 +17,18 @@
 
 <body>
 
-    <div style="background-color: #0c7cd5; width: 100%; height: 60px;">
+    <div style="background-color: #0c7cd5; width: 100%; height: 50px; margin-top: -16px;">
         <div class="container-fluid">
-            <div style="width: 15%; float: left">
-                <font>Welcome,<h5 th:text="${session.User.username}"></h5></font>
+            <div style="width: 15%; float: left; margin-top: 10px">
+                <font style="font-size: medium">Welcome, <b th:text="${session.User.username}"></b></font>
             </div>
-
             &nbsp;&nbsp;&nbsp;&nbsp;
-            <div style="width: 15%; float: left">
-                <font>Today's PM25 : <h5 th:text="${session.pm25}"></h5></font>
+            <div style="width: 15%; float: left; margin-top: 10px">
+                <font style="font-size: medium">Today's PM25 : <b th:text="${session.pm25}"></b></font>
             </div>
 
-            <ul class="nav navbar-nav pull-right">
+            <ul class="nav navbar-nav pull-right" style="margin-top: 8px">
+                <li><button id="onlinecount" class="btn btn-info" type="button">Online</button></li>
                 <li><button id="profile" class="btn btn-info" type="button">Profile</button></li>
                 <li><button id="signout" class="btn btn-danger" type="button">Sign out</button></li>
             </ul>
@@ -109,6 +109,27 @@
 
 
     });
+
+    $('#onlinecount').on('click', function () {
+        $.ajax({
+                url : "/ccw/main/onlinecount",
+
+                type : "post",
+                dataType : "json",
+
+                success : function(response) {
+                    if (response.errMeg == "0") {
+                        alert("Total online users: " + response.count);
+                    } else if (response.errMeg == "1") {
+                        alert("error");
+                    }
+                },
+
+                error : function(response, status, xhr) {
+                    alert("fail");
+                }
+            });
+      });
 
 </script>
 </body>

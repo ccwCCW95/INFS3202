@@ -17,17 +17,17 @@
 
 <body>
 
-    <div style="background-color: #0c7cd5; width: 100%; height: 60px;">
+    <div style="background-color: #0c7cd5; width: 100%; height: 50px; margin-top: -16px;">
         <div class="container-fluid">
-            <div style="width: 15%; float: left">
-                <font>Welcome,<h5 th:text="${session.User.username}"></h5></font>
+            <div style="width: 15%; float: left; margin-top: 10px">
+                <font style="font-size: medium">Welcome, <b th:text="${session.User.username}"></b></font>
             </div>
             &nbsp;&nbsp;&nbsp;&nbsp;
-            <div style="width: 15%; float: left">
-                <font>Today's PM25 : <h5 th:text="${session.pm25}"></h5></font>
+            <div style="width: 15%; float: left; margin-top: 10px">
+                <font style="font-size: medium">Today's PM25 : <b th:text="${session.pm25}"></b></font>
             </div>
 
-            <ul class="nav navbar-nav pull-right">
+            <ul class="nav navbar-nav pull-right" style="margin-top: 8px">
                 <li><button id="onlinecount" class="btn btn-info" type="button">Online</button></li>
                 <li><button id="profile" class="btn btn-info" type="button">Profile</button></li>
                 <li><button id="signout" class="btn btn-danger" type="button">Sign out</button></li>
@@ -37,49 +37,71 @@
 
     <br />
 
-    <button id="postnewquestion" type="button" class="btn btn-success btn-lg">Post a new question</button>
+    <div style="background-color: #1b6d85">
 
-    <div></div>
+        <button id="postnewquestion" type="button" class="btn btn-success btn-lg">Post a new question</button>
 
-    <div class="form-group" style="width: 20%; margin-top: 10px; float: left">
-        <input id="qtsearchbox" name="KeyWord" class="form-control mr-sm-2" type="text" placeholder="Search Question">
-    </div>
-    <button type="button" class="btn btn-default" style="margin-top: 10px">Search</button>
+        <div></div>
 
-    <div style="margin-top: 20px"></div>
+        <div class="form-group" style="width: 20%; margin-top: 10px; float: left">
+            <input id="qtsearchbox" name="KeyWord" class="form-control mr-sm-2" type="text" placeholder="Search Question">
+        </div>
+        <button type="button" class="btn btn-default" style="margin-top: 10px">Search</button>
 
-    <div style="width: 30%">
+        <div style="margin-top: 20px"></div>
 
-        <div th:fragment="questionlist" class="questionlist" style="width: 100%; height: 100%; margin-top: 20px; margin-left:5px; float: left; overflow-y: scroll; max-height: 500px">
-            <ul class="list-group" th:if="${not #lists.isEmpty(session.questions)}" th:each="item : ${session.questions}">
-                <button type="button" class="questions list-group-item list-group-item-action" style="padding: 30px 10px" th:text="${item.title}" th:onclick="showQuestion([[${item.id}]])" ></button>
-            </ul>
+        <div style="width: 30%; float: left; margin-top: 20px">
+
+            <div>
+                <h4 style="margin-left: 4px">Questions List</h4>
+            </div>
+
+            <div th:fragment="questionlist" class="questionlist" style="width: 100%; height: 100%; margin-left:5px; float: left; overflow-y: scroll; max-height: 500px">
+                <ul class="list-group" th:if="${not #lists.isEmpty(session.questions)}" th:each="item : ${session.questions}">
+                    <button type="button" class="questions list-group-item list-group-item-action" style="background-color: aliceblue; padding: 30px 10px" th:text="${item.title}" th:onclick="showQuestion([[${item.id}]])" ></button>
+                </ul>
+            </div>
+        </div>
+        &nbsp;&nbsp;
+        <div class="pull-right" style="width: 69%; margin-top: 20px; float: left; height: 500px">
+            <div>
+                <h4 style="margin-left: 4px">Question Details</h4>
+            </div>
+
+            <div style="height: 49%; background-color: aliceblue";>
+                &nbsp;&nbsp;
+                <div style="height: 68%">
+                    <h3 id="questiontitle"></h3><br/>
+                    <h5 id="questionauthor" style="color: red"></h5><br/>
+                    <h4 id="questioncontent"></h4><br/>
+                </div>
+                <input id="commentcontent" type="text" class="form-control pull-right" aria-label="Small" aria-describedby="inputGroup-sizing-sm" style="width: 30%; float: right">
+                <button id="addcomments" class="btn btn-danger pull-right" type="button" style="margin-right: 5px;">Add Comments</button>
+            </div>
+
+            <div style="max-height: 231px; overflow-y: scroll; margin-top: 5px" class="comments" th:fragment="commentors">
+                <ul style="margin-bottom: 5px" class="list-group" th:if="${not #lists.isEmpty(commentors)}" th:each="commentor, iterStat : ${commentors}">
+                    <li class="list-group-item" style="background-color: aliceblue;">
+                        <tr>
+                            <td th:text="${iterStat.index + 1}"></td>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <td><b>From: </b></td>
+                            <td th:text="${commentor.c_name}"></td>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <td><b>Content: </b></td>
+                            <td th:text="${commentor.content}"></td>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <td><b>Rating: </b></td>
+                            <td th:text="${commentor.rating}"></td>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <td><button class="btn btn-info pull-right" type="button" style="margin-right: 5px; margin-top: -7px;" th:onclick="addRating([[${commentor.id}]], [[${commentor.rating}]])">Good!</button></td>
+                        </tr>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
-    &nbsp;&nbsp;
-    <div class="pull-right" style="width: 69%; margin-top: 20px; float: left; height: 500px">
-        <div style="height: 49%; background-color: white">
-            &nbsp;&nbsp;
-            <h3 id="questiontitle"></h3><br/>
-            <h4 id="questionauthor" style="color: red"></h4><br/>
-            <h4 id="questioncontent"></h4><br/>
-            <input id="commentcontent" type="text" class="form-control pull-right" aria-label="Small" aria-describedby="inputGroup-sizing-sm" style="width: 30%; float: right">
-            <button id="addcomments" class="btn btn-danger pull-right" type="button" style="margin-right: 5px;">Add Comments</button>
-        </div>
 
-        <div style="height: 49%; overflow-y: scroll; margin-top: 5px" class="comments" th:fragment="commentors">
-            <ul style="margin-bottom: 5px" class="list-group" th:if="${not #lists.isEmpty(commentors)}" th:each="commentor, iterStat : ${commentors}">
-                <li class="list-group-item">
-                    <tr>
-                        <td th:text="${iterStat.index}"></td>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <td th:text="${commentor.c_name}"></td>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <td th:text="${commentor.content}"></td>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <td th:text="${commentor.rating}"></td>&nbsp;&nbsp;&nbsp;&nbsp;
-
-                        <td><button class="btn btn-info pull-right" type="button" style="margin-right: 5px; margin-bottom: 5px" th:onclick="addRating([[${commentor.id}]], [[${commentor.rating}]])">Good!</button></td>
-                    </tr>
-                </li>
-            </ul>
+    <!-- Footer -->
+    <div style="margin-top: 10px; background-color: #00bbee; border: 1px solid #00bbee; float: left; width: 100%; text-align: center">
+        <div class="copyright" style="height: 40px">
+            <p style="margin-top: 10px">Online Discussion Platform</p>
         </div>
     </div>
 
@@ -155,9 +177,9 @@
                 success : function(response) {
                     if (response.errMeg == "0") {
                         // show question details
-                        $("#questiontitle").text(response.questiontitle);
-                        $("#questionauthor").text(response.questionauthor);
-                        $("#questioncontent").text(response.questioncontent);
+                        $("#questiontitle").text("Title: " + response.questiontitle);
+                        $("#questionauthor").text("Author: " + response.questionauthor);
+                        $("#questioncontent").text("Description: " + response.questioncontent);
                     } else if (response.errMeg == "1") {
                         alert("error");
                     }
