@@ -71,9 +71,10 @@
             <div style="height: 49%; background-color: aliceblue";>
                 &nbsp;&nbsp;
                 <div style="height: 68%">
-                    <h3 id="questiontitle"></h3><br/>
+                    <h3 id="questiontitle"></h3><button id="pin" style="display:none" onclick="pin()">pin</button><button id="nopin" style="display:none" onclick="nopin()">cancel pin</button><br/>
                     <h5 id="questionauthor" style="color: red"></h5><br/>
                     <h4 id="questioncontent"></h4><br/>
+                    <h4 id="questionviews"></h4><br/>
                 </div>
                 <input id="commentcontent" type="text" class="form-control pull-right" aria-label="Small" aria-describedby="inputGroup-sizing-sm" style="width: 30%; float: right">
                 <button id="addcomments" class="btn btn-danger pull-right" type="button" style="margin-right: 5px;">Add Comments</button>
@@ -180,6 +181,16 @@
                         $("#questiontitle").text("Title: " + response.questiontitle);
                         $("#questionauthor").text("Author: " + response.questionauthor);
                         $("#questioncontent").text("Description: " + response.questioncontent);
+                        $("#questionviews").text("Views: " + response.questionviews);
+
+                        // control the pin button
+                        if (response.pinvalue == "1"){
+                            $("#pin").hide();
+                            $("#nopin").show();
+                        }else {
+                            $("#pin").show();
+                            $("#nopin").hide();
+                        }
                     } else if (response.errMeg == "1") {
                         alert("error");
                     }
@@ -205,6 +216,46 @@
                     alert("comments fail");
                 }
             });
+    }
+
+    function pin(){
+        $.ajax({
+            url : "/ccw/main/pinqus",
+            data : {
+                questionId : showQuestionId
+            },
+            type : "post",
+
+            success : function(response) {
+                $(".questionlist").html(response)
+                $("#pin").hide();
+                $("#nopin").show();
+            },
+
+            error : function(response, status, xhr) {
+                alert("questionlist fail");
+            }
+        });
+    }
+
+    function nopin(){
+        $.ajax({
+            url : "/ccw/main/nopinqus",
+            data : {
+                questionId : showQuestionId
+            },
+            type : "post",
+
+            success : function(response) {
+                $(".questionlist").html(response)
+                $("#pin").show();
+                $("#nopin").hide();
+            },
+
+            error : function(response, status, xhr) {
+                alert("questionlist fail");
+            }
+        });
     }
 
     $('#postnewquestion').on('click', function () {

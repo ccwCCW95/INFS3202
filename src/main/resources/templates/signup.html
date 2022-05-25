@@ -35,6 +35,16 @@
         </div>
 
         <div class="form-group">
+          <label for="sequs1">Secret Question 1 : What is your mother's name?</label>
+          <input th:field="*{sequs1}" type="text" class="form-control" id="sequs1" placeholder="Sequs1">
+        </div>
+
+        <div class="form-group">
+          <label for="sequs2">Secret Question 2 : What is your father's name?</label>
+          <input th:field="*{sequs2}" type="text" class="form-control" id="sequs2" placeholder="Sequs2">
+        </div>
+
+        <div class="form-group">
           <label for="email">Email address</label>
           <input th:field="*{email}" type="email" class="form-control" id="email" placeholder="name@example.com">
           <p id="errorEmail" style="color: red"></p>

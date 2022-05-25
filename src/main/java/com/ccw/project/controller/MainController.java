@@ -9,22 +9,25 @@ import com.ccw.project.service.MainService;
 import com.ccw.project.system.OnlineControl;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.net.URLEncoder;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -46,6 +49,12 @@ public class MainController {
         // Get the specific question
         Questions question = mainService.getQuestion(questionId);
 
+        // Update the views number of specific question
+        int oldViews = question.getViews();
+        int newViews = oldViews + 1;
+
+        mainService.updateQusViews(questionId, newViews);
+
         Map<String,Object> map = new HashMap<>();
 
         if (question != null){
@@ -56,6 +65,13 @@ public class MainController {
             map.put("questiontitle", question.getTitle());
             map.put("questionauthor", authorName);
             map.put("questioncontent", question.getDescription());
+            map.put("questionviews", newViews);
+
+            if(mainService.checkIfPin(question, ((User)session.getAttribute("User")).getId())){
+                map.put("pinvalue", "1");
+            }else {
+                map.put("pinvalue", "0");
+            }
 
         }else {
             map.put("errMeg","1");
@@ -108,7 +124,14 @@ public class MainController {
 
         if (result == 1){
 
-            session.setAttribute("questions", mainService.getQuestions());
+//            session.setAttribute("questions", mainService.getQuestions());
+
+            // Get the new question list
+            List<Questions> returnQuestions = mainService.getQuestions();
+
+            List<Questions> newList = mainService.getAfPinQuestions(returnQuestions, authorId);
+
+            session.setAttribute("questions", newList);
             return "main";
 
         }else {
@@ -283,9 +306,129 @@ public class MainController {
 
         session.setAttribute("questions", returnQuestions);
 
-//        model.addAttribute("returnQuestions", returnQuestions);
+        return "main::questionlist";
+    }
+
+    @RequestMapping("/ccw/main/pinqus")
+    public String pinQuestion(@RequestParam("questionId") int questionId, HttpSession session){
+        // get the user id
+        User user = (User)session.getAttribute("User");
+        int userId = user.getId();
+
+        // Get the info for this specific question
+        Questions questions = mainService.getQuestion(questionId);
+
+        String pinIDs = questions.getPinId();
+
+        if(pinIDs == null){
+            pinIDs = "";
+        }
+
+        String[] temp1 = pinIDs.split(",");
+
+        boolean flag = false;
+
+        for(int i = 0; i <= temp1.length - 1; i++){
+            if (temp1[i].equals(userId)){
+                flag = true;
+            }
+        }
+
+        if (!flag){
+            mainService.updatePinids(questionId, pinIDs + "," + userId);
+        }
+
+        // Get the new question list
+        List<Questions> returnQuestions = mainService.getQuestions();
+
+        List<Questions> newList = mainService.getAfPinQuestions(returnQuestions, userId);
+
+        session.setAttribute("questions", newList);
 
         return "main::questionlist";
+    }
+
+    @RequestMapping("/ccw/main/nopinqus")
+    public String noPinQuestion(@RequestParam("questionId") int questionId, HttpSession session){
+        // get the user id
+        User user = (User)session.getAttribute("User");
+        int userId = user.getId();
+
+        // Get the info for this specific question
+        Questions questions = mainService.getQuestion(questionId);
+
+        String pinIDs = questions.getPinId();
+
+        String[] temp1 = pinIDs.split(",");
+
+        String newPinIds = "";
+
+        for(int i = 0; i <= temp1.length - 1; i++){
+            if((!temp1[i].equals(String.valueOf(userId)) && (!"".equals(temp1[i])))){
+                newPinIds += ("," + temp1[i]);
+            }
+        }
+
+        mainService.updatePinids(questionId, newPinIds);
+
+
+        // Get the new question list
+        List<Questions> returnQuestions = mainService.getQuestions();
+
+        List<Questions> newList = mainService.getAfPinQuestions(returnQuestions, userId);
+
+        session.setAttribute("questions", newList);
+
+        return "main::questionlist";
+    }
+
+    @RequestMapping("/ccw/main/image")
+    public String image(Model model, HttpSession session){
+
+        // Get the user image from database
+        User user = (User) session.getAttribute("User");
+
+        User newUser = loginService.getUserInfor(user.getUsername());
+
+        String img = newUser.getImage();
+
+        model.addAttribute("filename", "/images/rotPhoto/" + img);
+
+        return "image";
+    }
+
+    @Value("${file.upload.path}")
+    private String filePath;
+
+    @RequestMapping("/ccw/main/upload")
+    public String upload(@RequestParam("file") MultipartFile file, Model model, HttpSession session) {
+
+        String filename = file.getOriginalFilename();
+
+        String path = filePath + "rotPhoto/";
+
+        File filepath = new File(path, filename);
+
+        if (!filepath.getParentFile().exists()) {
+            filepath.getParentFile().mkdirs();
+        }
+        try {
+            file.transferTo(new File(path + File.separator + filename));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Store the file name to database
+        User user = (User) session.getAttribute("User");
+        int userId = user.getId();
+        user.setImage(filename);
+
+        mainService.updateImg(user);
+
+        session.setAttribute("User", user);
+
+        model.addAttribute("filename", "/images/rotPhoto/" + filename);
+        return "image";
     }
 
 }

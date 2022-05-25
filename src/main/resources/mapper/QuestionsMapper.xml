@@ -135,4 +135,16 @@
   <select id="getLikelyQuestions" parameterType="com.ccw.project.entities.Questions" resultMap="BaseResultMap">
       select * from INFS3202.questions where title like '%${title}%' order by time desc
   </select>
+
+  <update id="updateViewsByQuestionId" parameterType="com.ccw.project.entities.Questions">
+    update INFS3202.questions
+    set views = #{views,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updatePinids" parameterType="com.ccw.project.entities.Questions">
+    update INFS3202.questions
+    set pin_id = #{pinId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
 </mapper>

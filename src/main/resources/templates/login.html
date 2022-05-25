@@ -35,6 +35,7 @@
             <input th:field="*{rememberme}" id="rememberme" type="checkbox" value="remember-me"> Remember me
           </label>
         </div>
+        <button id="forgetpasword" class="btn btn-sm btn-warning btn-block" type="button">Forget Password</button>
         <button id="signin" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
         <button id="signup" class="btn btn-lg btn-info btn-block" type="button">Sign up</button>
       </form>
@@ -112,6 +113,10 @@
 
     $('#signup').on('click', function () {
         window.location.href = "/ccw/login/registration";
+      });
+
+    $('#forgetpasword').on('click', function () {
+        window.location.href = "/ccw/login/forgetpaswordpage";
       });
 
 </script>

@@ -9,6 +9,7 @@ import com.ccw.project.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -104,5 +105,120 @@ public class MainService {
     public List<Questions> getLikelyQuestions(Questions questions){
         return questionsMapper.getLikelyQuestions(questions);
     }
+
+    /**
+     * Update the view number of specific question
+     * @param questionId
+     * @param newViews
+     * @return
+     */
+    public boolean updateQusViews(int questionId, int newViews){
+        Questions questions = new Questions();
+        questions.setId(questionId);
+        questions.setViews(newViews);
+
+        int num = questionsMapper.updateViewsByQuestionId(questions);
+
+        if (num == 1){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Update the pinIds
+     * @param questionId
+     * @param pinids
+     * @return
+     */
+    public boolean updatePinids(int questionId, String pinids){
+        Questions questions = new Questions();
+        questions.setId(questionId);
+        questions.setPinId(pinids);
+
+        int num = questionsMapper.updatePinids(questions);
+
+        if (num == 1){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the questionList after pin
+     * @param returnQuestions
+     * @param userId
+     * @return
+     */
+    public List<Questions> getAfPinQuestions(List<Questions> returnQuestions, int userId){
+        // Get the new question list
+        List<Questions> newList = new ArrayList<Questions>();
+
+        for (Questions tempQuestion : returnQuestions) {
+            String tempPin = tempQuestion.getPinId();
+
+            if(tempPin == null){
+                continue;
+            }
+
+            String[] temp = tempPin.split(",");
+
+            for(int i = 0; i <= temp.length - 1; i++){
+                if (temp[i].equals(String.valueOf(userId))){
+                    newList.add(tempQuestion);
+                }
+            }
+        }
+
+        for (Questions tempQuestion : returnQuestions) {
+            if (!newList.contains(tempQuestion)){
+                newList.add(tempQuestion);
+            }
+        }
+
+        return newList;
+    }
+
+    /**
+     * Check if this question is pinned by this user
+     * @param questions
+     * @param userId
+     * @return
+     */
+    public boolean checkIfPin(Questions questions, int userId){
+        String pinIds = questions.getPinId();
+
+        if(pinIds == null){
+            pinIds = "";
+        }
+
+        String[] temp = pinIds.split(",");
+
+        for(int i = 0; i <= temp.length - 1; i++){
+            if (temp[i].equals(String.valueOf(userId))){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Update the img info for user
+     * @param user
+     * @return
+     */
+    public boolean updateImg(User user){
+        int num = userMapper.updateImgById(user);
+
+        if (num == 1){
+            return true;
+        }
+
+        return false;
+    }
+
 
 }

@@ -66,7 +66,7 @@
         </javaClientGenerator>
 
 
-        <table catalog = "infs3202" tableName="comments" domainObjectName="Comments"
+        <table catalog = "infs3202" tableName="user" domainObjectName="User"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">

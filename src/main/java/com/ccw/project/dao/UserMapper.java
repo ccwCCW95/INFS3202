@@ -22,4 +22,14 @@ public interface UserMapper {
     int selectByEmail(String email);
 
     User selectRecordByUsername(String username);
+
+    String getSalt(String username);
+
+    int checkSequs1(User user);
+
+    int checkSequs2(User user);
+
+    int updatePassByUserName(User user);
+
+    int updateImgById(User user);
 }

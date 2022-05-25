@@ -22,4 +22,8 @@ public interface QuestionsMapper {
     List<Questions> getQuestions();
 
     List<Questions> getLikelyQuestions(Questions questions);
+
+    int updateViewsByQuestionId(Questions questions);
+
+    int updatePinids(Questions questions);
 }

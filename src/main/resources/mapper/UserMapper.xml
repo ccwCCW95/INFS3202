@@ -8,10 +8,15 @@
       <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String" />
       <arg column="image" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="salt" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="usertype" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="sequs1" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="column_9" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="sequs2" jdbcType="VARCHAR" javaType="java.lang.String" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List" >
-    id, username, password, email, image
+    id, username, password, email, image, salt, usertype, sequs1, column_9, sequs2
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -25,9 +30,13 @@
   </delete>
   <insert id="insert" parameterType="com.ccw.project.entities.User" >
     insert into INFS3202.user (id, username, password,
-      email, image)
+      email, image, salt, 
+      usertype, sequs1, column_9, 
+      sequs2)
     values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{email,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR})
+      #{email,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, 
+      #{usertype,jdbcType=VARCHAR}, #{sequs1,jdbcType=VARCHAR}, #{column9,jdbcType=INTEGER}, 
+      #{sequs2,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.ccw.project.entities.User" >
     insert into INFS3202.user
@@ -47,6 +56,21 @@
       <if test="image != null" >
         image,
       </if>
+      <if test="salt != null" >
+        salt,
+      </if>
+      <if test="usertype != null" >
+        usertype,
+      </if>
+      <if test="sequs1 != null" >
+        sequs1,
+      </if>
+      <if test="column9 != null" >
+        column_9,
+      </if>
+      <if test="sequs2 != null" >
+        sequs2,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -63,6 +87,21 @@
       </if>
       <if test="image != null" >
         #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="usertype != null" >
+        #{usertype,jdbcType=VARCHAR},
+      </if>
+      <if test="sequs1 != null" >
+        #{sequs1,jdbcType=VARCHAR},
+      </if>
+      <if test="column9 != null" >
+        #{column9,jdbcType=INTEGER},
+      </if>
+      <if test="sequs2 != null" >
+        #{sequs2,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -81,6 +120,21 @@
       <if test="image != null" >
         image = #{image,jdbcType=VARCHAR},
       </if>
+      <if test="salt != null" >
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="usertype != null" >
+        usertype = #{usertype,jdbcType=VARCHAR},
+      </if>
+      <if test="sequs1 != null" >
+        sequs1 = #{sequs1,jdbcType=VARCHAR},
+      </if>
+      <if test="column9 != null" >
+        column_9 = #{column9,jdbcType=INTEGER},
+      </if>
+      <if test="sequs2 != null" >
+        sequs2 = #{sequs2,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -89,11 +143,15 @@
     set username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
-      image = #{image,jdbcType=VARCHAR}
+      image = #{image,jdbcType=VARCHAR},
+      salt = #{salt,jdbcType=VARCHAR},
+      usertype = #{usertype,jdbcType=VARCHAR},
+      sequs1 = #{sequs1,jdbcType=VARCHAR},
+      column_9 = #{column9,jdbcType=INTEGER},
+      sequs2 = #{sequs2,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  
-  
+
   <select id="selectByUserName" parameterType="java.lang.String" resultType="java.lang.Integer" >
     select count(*) from INFS3202.user where username = #{username,jdbcType=VARCHAR}
   </select>
@@ -105,4 +163,28 @@
   <select id="selectRecordByUsername" parameterType="java.lang.String" resultType="com.ccw.project.entities.User">
     select * from INFS3202.user where username = #{username,jdbcType=VARCHAR}
   </select>
+
+  <select id="getSalt" parameterType="java.lang.String" resultType="java.lang.String">
+    select salt from INFS3202.user where username = #{username,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="checkSequs1" parameterType="com.ccw.project.entities.User" resultType="java.lang.Integer">
+    select count(*) from INFS3202.user where username = #{username,jdbcType=VARCHAR} and sequs1 = #{sequs1,jdbcType=VARCHAR}
+  </select>
+
+  <select id="checkSequs2" parameterType="com.ccw.project.entities.User" resultType="java.lang.Integer">
+    select count(*) from INFS3202.user where username = #{username,jdbcType=VARCHAR} and sequs2 = #{sequs2,jdbcType=VARCHAR}
+  </select>
+  
+  <update id="updatePassByUserName" parameterType="com.ccw.project.entities.User">
+    update INFS3202.user
+    set password = #{password,jdbcType=VARCHAR}
+    where username = #{username,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateImgById" parameterType="com.ccw.project.entities.User">
+    update INFS3202.user
+    set image = #{image,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
 </mapper>

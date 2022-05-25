@@ -65,6 +65,7 @@
 
         <button id="cancel" type="button" class="btn btn-info">Cancel</button>
         <button id="submit" type="submit" class="btn btn-primary">Update</button>
+        <button id="image" type="button" class="btn btn-warning">User Image</button>
       </form>
 
     </div>
@@ -82,7 +83,11 @@
         window.location.href = "/ccw/login/signout";
       });
 
-    $('#cancel').on('click', function () {
+    $('#image').on('click', function () {
+        window.location.href = "/ccw/main/image";
+      });
+
+     $('#cancel').on('click', function () {
         window.location.href = "/ccw/login/submit";
       });
 

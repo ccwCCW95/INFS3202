@@ -76,4 +76,73 @@ public class LoginService {
     public User getUserInfor(String userName){
         return userMapper.selectRecordByUsername(userName);
     }
+
+    /**
+     * Return the user's salt
+     * @param userName
+     * @return
+     */
+    public String getSalt(String userName){
+        return userMapper.getSalt(userName);
+    }
+
+    /**
+     * Check if the secrete question 1 is match
+     * @param username
+     * @param sequs1
+     * @return
+     */
+    public boolean checkSequs1(String username, String sequs1){
+        User user = new User();
+        user.setUsername(username);
+        user.setSequs1(sequs1);
+
+        int num = userMapper.checkSequs1(user);
+
+        if (num == 1){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the secrete question 2 is match
+     * @param username
+     * @param sequs2
+     * @return
+     */
+    public boolean checkSequs2(String username, String sequs2){
+        User user = new User();
+        user.setUsername(username);
+        user.setSequs2(sequs2);
+
+        int num = userMapper.checkSequs2(user);
+
+        if (num == 1){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Update the password
+     * @param username
+     * @param password
+     * @return
+     */
+    public boolean updatePassword(String username, String password){
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+
+        int num = userMapper.updatePassByUserName(user);
+
+        if (num == 1){
+            return true;
+        }
+
+        return false;
+    }
 }
