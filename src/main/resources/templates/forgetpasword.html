@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<html lang="en">
+<head>
+    <meta content="text/html;" charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-3.4.1/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-3.4.1/css/bootstrap-theme.min.css}" />
+
+    <link href="https://fastly.jsdelivr.net/npm/@bootcss/v3.bootcss.com@1.0.35/examples/signin/signin.css" rel="stylesheet">
+
+
+    <title>Forget Password</title>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+      <form action="#" th:action="@{/ccw/login/forgetpass}" th:object="${user}" method="post">
+        <h2 class="form-signin-heading">Forget Password</h2>
+
+        <div class="form-group">
+          <label for="InputUserName">UserName</label>
+          <input th:field="*{username}" class="form-control" type="text" placeholder="UserName" id="username" required autofocus>
+          <p id="errorUser" style="color: red"></p>
+        </div>
+
+        <div class="form-group">
+          <label for="sequs1">Secret Question 1 : What is your mother's name?</label>
+          <input th:field="*{sequs1}" type="text" class="form-control" id="sequs1" placeholder="Sequs1">
+          <p id="errorSeq1" style="color: red"></p>
+        </div>
+
+        <div class="form-group">
+          <label for="sequs2">Secret Question 2 : What is your father's name?</label>
+          <input th:field="*{sequs2}" type="text" class="form-control" id="sequs2" placeholder="Sequs2">
+          <p id="errorSeq2" style="color: red"></p>
+        </div>
+
+        <div class="form-group">
+          <label for="InputPassword">New Password</label>
+          <input th:field="*{password}" type="password" class="form-control" id="password" placeholder="Password">
+        </div>
+
+        <button id="cancel" type="button" class="btn btn-info">Cancel</button>
+        <button id="submit" type="submit" class="btn btn-primary">Submit</button>
+      </form>
+
+    </div>
+
+<script src="https://fastly.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+<script th:src="@{/bootstrap-3.4.1/js/bootstrap.min.js}"></script>
+
+<script th:inline="javascript">
+
+    $("#username").blur(function() {
+        $("#errorUser").text("");
+        $.ajax({
+            url : "/ccw/login/checkusername",
+            data : {
+                username : $("#username").val()
+            },
+            type : "post",
+            dataType : "json",
+
+            success : function(response) {
+                if (response.errMeg == "0") {
+                } else if (response.errMeg == "1") {
+                    $("#errorUser").text("This user is not exist, please go to registration page!");
+                }
+            },
+
+            error : function(response, status, xhr) {
+                alert("fail");
+            }
+        });
+    });
+
+
+    $("#sequs1").blur(function() {
+       $("#errorSeq1").text("");
+       $.ajax({
+           url : "/ccw/login/checksequs1",
+           data : {
+               username : $("#username").val(),
+               sequs1 : $("#sequs1").val()
+           },
+           type : "post",
+           dataType : "json",
+
+           success : function(response) {
+               if (response.errMeg == "0") {
+
+               } else if (response.errMeg == "1") {
+                   $("#errorSeq1").text("The first secrete questions doesn't match, please try again!");
+               }
+           },
+
+           error : function(response, status, xhr) {
+               alert("fail");
+           }
+       });
+
+   });
+
+    $("#sequs2").blur(function() {
+       $("#errorSeq2").text("");
+       $.ajax({
+           url : "/ccw/login/checksequs2",
+           data : {
+               username : $("#username").val(),
+               sequs2 : $("#sequs2").val()
+           },
+           type : "post",
+           dataType : "json",
+
+           success : function(response) {
+               if (response.errMeg == "0") {
+
+               } else if (response.errMeg == "1") {
+                   $("#errorSeq2").text("The second secrete questions doesn't match, please try again!");
+               }
+           },
+
+           error : function(response, status, xhr) {
+               alert("fail");
+           }
+       });
+
+   });
+
+    $('#cancel').on('click', function () {
+        window.location.href = "/ccw/login";
+      });
+
+
+</script>
+</body>
+</html>
