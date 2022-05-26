@@ -1,9 +1,11 @@
 package com.ccw.project.service;
 
 import com.ccw.project.dao.CommentsMapper;
+import com.ccw.project.dao.GalleryMapper;
 import com.ccw.project.dao.QuestionsMapper;
 import com.ccw.project.dao.UserMapper;
 import com.ccw.project.entities.Comments;
+import com.ccw.project.entities.Gallery;
 import com.ccw.project.entities.Questions;
 import com.ccw.project.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class MainService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private GalleryMapper galleryMapper;
 
     /**
      * Return all questions
@@ -220,5 +225,82 @@ public class MainService {
         return false;
     }
 
+    /**
+     * Check if the user is exist in the gallery
+     * @param userId
+     * @return
+     */
+    public boolean checkUserinGallery(int userId){
+        int num = galleryMapper.checkUserExist(userId);
 
+        if (num == 1){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Update the gallery by userId
+     * @param gallery
+     * @return
+     */
+    public boolean updateGallery(Gallery gallery){
+        int num = galleryMapper.updateByUserId(gallery);
+
+        if (num == 1){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Insert the images into gallery
+     * @param gallery
+     * @return
+     */
+    public boolean insertGallery(Gallery gallery){
+        int num = galleryMapper.insertSelective(gallery);
+
+        if (num == 1){
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Return the user's gallery
+     * @param userId
+     * @return
+     */
+    public Gallery getUserGallery(int userId){
+        Gallery gallery = galleryMapper.getUserGallery(userId);
+
+        return gallery;
+    }
+
+    /**
+     * Return all users except manager
+     * @return
+     */
+    public List<User> getAllUsers(){
+        return userMapper.selectAllUsers();
+    }
+
+    /**
+     * Delete the user
+     * @param userId
+     * @return
+     */
+    public boolean deleteUser(int userId){
+        int num = userMapper.deleteUser(userId);
+
+        if (num == 1){
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -187,4 +187,12 @@
     set image = #{image,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+  <select id="selectAllUsers" resultMap="BaseResultMap">
+    select * from INFS3202.user where id not in (select id from user where usertype = '1')
+  </select>
+  
+  <delete id="deleteUser" parameterType="java.lang.Integer">
+    delete from INFS3202.user where id = #{userId,jdbcType=INTEGER}
+  </delete>
 </mapper>

@@ -3,6 +3,8 @@ package com.ccw.project.dao;
 import com.ccw.project.entities.User;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface UserMapper {
     int deleteByPrimaryKey(Integer id);
@@ -32,4 +34,8 @@ public interface UserMapper {
     int updatePassByUserName(User user);
 
     int updateImgById(User user);
+
+    List<User> selectAllUsers();
+
+    int deleteUser(Integer userId);
 }

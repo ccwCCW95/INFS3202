@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<html lang="en">
+<head>
+    <meta content="text/html;" charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-3.4.1/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-3.4.1/css/bootstrap-theme.min.css}" />
+
+    <link href="https://fastly.jsdelivr.net/npm/@bootcss/v3.bootcss.com@1.0.35/examples/signin/signin.css" rel="stylesheet">
+
+
+    <title>UserManagement</title>
+
+</head>
+
+<body onload="startTime()">
+
+    <div style="background-color: #0c7cd5; width: 100%; height: 50px; margin-top: -16px;">
+        <div class="container-fluid">
+            <div style="width: 15%; float: left; margin-top: 10px">
+                <font style="font-size: medium">Welcome, <b th:text="${session.User.username}"></b></font>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <div style="width: 15%; float: left; margin-top: 10px">
+                <font style="font-size: medium">Today's PM25 : <b th:text="${session.pm25}"></b></font>
+            </div>
+
+            <ul class="nav navbar-nav pull-right" style="margin-top: 8px">
+                <li><font color="#33FFFF"><span id="nowDateTimeSpan"></span></font></li>&nbsp;&nbsp;
+                <li><button id="onlinecount" class="btn btn-info" type="button">Online</button></li>
+                <li><button id="profile" class="btn btn-info" type="button">Profile</button></li>
+                <li><button id="signout" class="btn btn-danger" type="button">Sign out</button></li>
+            </ul>
+        </div>
+    </div>
+
+        <br />
+
+    <div class="container">
+
+      <h2 class="form-signin-heading">User Management</h2>
+
+      <table class="table users" th:fragment="users">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">User Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Operation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${not #lists.isEmpty(allusers)}" th:each="item , iterStat : ${allusers}">
+            <th scope="row" th:text="${iterStat.index + 1}"></th>
+            <td th:text="${item.username}"></td>
+            <td th:text="${item.email}"></td>
+            <td><button type="button" class="btn btn-primary" th:onclick="deleteuser([[${item.id}]])" >Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button id="cancel" type="button" class="btn btn-info">Cancel</button>
+
+    </div>
+
+<script src="https://fastly.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+<script th:src="@{/bootstrap-3.4.1/js/bootstrap.min.js}"></script>
+
+<script th:inline="javascript">
+
+    $('#profile').on('click', function () {
+        window.location.href = "/ccw/main/profile";
+      });
+
+    $('#signout').on('click', function () {
+        window.location.href = "/ccw/login/signout";
+      });
+
+     $('#cancel').on('click', function () {
+        window.location.href = "/ccw/login/submit";
+      });
+
+    $('#onlinecount').on('click', function () {
+        $.ajax({
+                url : "/ccw/main/onlinecount",
+
+                type : "post",
+                dataType : "json",
+
+                success : function(response) {
+                    if (response.errMeg == "0") {
+                        alert("Total online users: " + response.count);
+                    } else if (response.errMeg == "1") {
+                        alert("error");
+                    }
+                },
+
+                error : function(response, status, xhr) {
+                    alert("fail");
+                }
+            });
+      });
+
+    function deleteuser(userId){
+        $.ajax({
+            url : "/ccw/main/deleteuser",
+            data : {
+                userId : userId
+            },
+            type : "post",
+
+            success : function(response) {
+                $(".users").html(response)
+            },
+
+            error : function(response, status, xhr) {
+                alert("delete user fail");
+            }
+        });
+    }
+
+    function startTime()
+
+        {
+
+            var today = new Date();
+
+            var yyyy = today.getFullYear();
+
+            var MM = today.getMonth() + 1;
+
+            var dd = today.getDate();
+
+            var hh = today.getHours();
+
+            var mm = today.getMinutes();
+
+            var ss = today.getSeconds();
+
+            MM = checkTime(MM);
+
+            dd = checkTime(dd);
+
+            mm = checkTime(mm);
+
+            ss = checkTime(ss);
+
+            document.getElementById('nowDateTimeSpan').innerHTML= yyyy+ "-" + MM + "-" + dd + " " + hh + ":" + mm + ":" + ss;
+
+            setTimeout('startTime()',1000);
+
+        }
+
+        function checkTime(i)
+
+        {
+            if (i<10){
+
+                i= "0" + i;
+
+            }
+
+              return i;
+        }
+
+</script>
+</body>
+</html>

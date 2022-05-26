@@ -15,7 +15,7 @@
 
 </head>
 
-<body>
+<body onload="startTime()">
 
     <div style="background-color: #0c7cd5; width: 100%; height: 50px; margin-top: -16px;">
         <div class="container-fluid">
@@ -28,6 +28,8 @@
             </div>
 
             <ul class="nav navbar-nav pull-right" style="margin-top: 8px">
+                <li><font color="#33FFFF"><span id="nowDateTimeSpan"></span></font></li>&nbsp;&nbsp;
+                <li th:if="${session.User.usertype} eq '1'"><button id="usermanagement" class="btn btn-info" type="button">Users(M)</button></li>
                 <li><button id="onlinecount" class="btn btn-info" type="button">Online</button></li>
                 <li><button id="profile" class="btn btn-info" type="button">Profile</button></li>
                 <li><button id="signout" class="btn btn-danger" type="button">Sign out</button></li>
@@ -165,6 +167,10 @@
         window.location.href = "/ccw/login/signout";
       });
 
+    $('#usermanagement').on('click', function () {
+        window.location.href = "/ccw/main/usermanagement";
+      });
+
     function showQuestion(questionId){
         showQuestionId = questionId;
         $.ajax({
@@ -299,6 +305,50 @@
                 alert("comments fail");
             }
         });
+    }
+
+    function startTime()
+
+    {
+
+        var today = new Date();
+
+        var yyyy = today.getFullYear();
+
+        var MM = today.getMonth() + 1;
+
+        var dd = today.getDate();
+
+        var hh = today.getHours();
+
+        var mm = today.getMinutes();
+
+        var ss = today.getSeconds();
+
+        MM = checkTime(MM);
+
+        dd = checkTime(dd);
+
+        mm = checkTime(mm);
+
+        ss = checkTime(ss);
+
+        document.getElementById('nowDateTimeSpan').innerHTML= yyyy+ "-" + MM + "-" + dd + " " + hh + ":" + mm + ":" + ss;
+
+        setTimeout('startTime()',1000);
+
+    }
+
+    function checkTime(i)
+
+    {
+        if (i<10){
+
+            i= "0" + i;
+
+        }
+
+          return i;
     }
 
 </script>

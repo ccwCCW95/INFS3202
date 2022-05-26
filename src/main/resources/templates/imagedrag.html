@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<html lang="en">
+<head>
+    <meta content="text/html;" charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-3.4.1/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap-3.4.1/css/bootstrap-theme.min.css}" />
+
+    <link rel="stylesheet" type="text/css" th:href="@{/plugins/bootstrap-fileinput/css/fileinput.css}" />
+
+    <link href="https://fastly.jsdelivr.net/npm/@bootcss/v3.bootcss.com@1.0.35/examples/signin/signin.css" rel="stylesheet">
+
+
+    <title>User Image Gallery Drag</title>
+
+</head>
+
+<body onload="startTime()">
+
+    <div style="background-color: #0c7cd5; width: 100%; height: 50px; margin-top: -16px;">
+        <div class="container-fluid">
+            <div style="width: 15%; float: left; margin-top: 10px">
+                <font style="font-size: medium">Welcome, <b th:text="${session.User.username}"></b></font>
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <div style="width: 15%; float: left; margin-top: 10px">
+                <font style="font-size: medium">Today's PM25 : <b th:text="${session.pm25}"></b></font>
+            </div>
+
+            <ul class="nav navbar-nav pull-right" style="margin-top: 8px">
+                <li><font color="#33FFFF"><span id="nowDateTimeSpan"></span></font></li>&nbsp;&nbsp;
+                <li><button id="onlinecount" class="btn btn-info" type="button">Online</button></li>
+                <li><button id="profile" class="btn btn-info" type="button">Profile</button></li>
+                <li><button id="signout" class="btn btn-danger" type="button">Sign out</button></li>
+            </ul>
+        </div>
+    </div>
+
+        <br />
+
+    <div class="container">
+
+      <form>
+          <div>
+              <div class="modal-header">
+                  <h2 class="form-signin-heading">User Image gallery (Drag)</h2>
+              </div>
+              <div class="modal-body">
+                  <input type="file" name="files" id="file" multiple class="file-loading"/>
+              </div>
+          </div>
+      </form>
+
+
+      <button id="cancel" type="button" class="btn btn-info">Cancel</button>
+      <br>
+      <br>
+
+      <ul class="list-group" th:if="${not #lists.isEmpty(gallerylist)}" th:each="item : ${gallerylist}">
+          <img th:src="@{${item}}" alt="image">
+      </ul>
+
+    </div>
+
+<script src="https://fastly.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+<script th:src="@{/bootstrap-3.4.1/js/bootstrap.min.js}"></script>
+
+<script th:src="@{/plugins/bootstrap-fileinput/js/fileinput.js}"></script>
+
+<script th:inline="javascript">
+
+    $('#profile').on('click', function () {
+        window.location.href = "/ccw/main/profile";
+      });
+
+    $('#signout').on('click', function () {
+        window.location.href = "/ccw/login/signout";
+      });
+
+    $('#cancel').on('click', function () {
+        window.location.href = "/ccw/login/submit";
+      });
+
+    $(function () {
+        var control = $("#file");
+        var uploadUrl = "/ccw/main/uploadgallerydrag";
+        control.fileinput({
+            uploadUrl: uploadUrl,
+            allowedFileExtensions: ['jpg', 'JEG'],
+            showUpload: true,
+            showCaption: false,
+            browseClass: "btn btn-primary",
+            dropZoneEnabled: true,
+            enctype: 'multipart/form-data',
+            validateInitialCount: true,
+            previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+        });
+
+        $("#file").on("fileuploaded", function (event, data, previewId, index) {
+            window.location.href = "/ccw/main/imagegallerydrag";
+        });
+    });
+
+    function startTime()
+
+        {
+
+            var today = new Date();
+
+            var yyyy = today.getFullYear();
+
+            var MM = today.getMonth() + 1;
+
+            var dd = today.getDate();
+
+            var hh = today.getHours();
+
+            var mm = today.getMinutes();
+
+            var ss = today.getSeconds();
+
+            MM = checkTime(MM);
+
+            dd = checkTime(dd);
+
+            mm = checkTime(mm);
+
+            ss = checkTime(ss);
+
+            document.getElementById('nowDateTimeSpan').innerHTML= yyyy+ "-" + MM + "-" + dd + " " + hh + ":" + mm + ":" + ss;
+
+            setTimeout('startTime()',1000);
+
+        }
+
+        function checkTime(i)
+
+        {
+            if (i<10){
+
+                i= "0" + i;
+
+            }
+
+              return i;
+        }
+
+
+</script>
+</body>
+</html>

@@ -15,7 +15,7 @@
 
 </head>
 
-<body>
+<body onload="startTime()">
 
     <div style="background-color: #0c7cd5; width: 100%; height: 50px; margin-top: -16px;">
         <div class="container-fluid">
@@ -28,6 +28,7 @@
             </div>
 
             <ul class="nav navbar-nav pull-right" style="margin-top: 8px">
+                <li><font color="#33FFFF"><span id="nowDateTimeSpan"></span></font></li>&nbsp;&nbsp;
                 <li><button id="onlinecount" class="btn btn-info" type="button">Online</button></li>
                 <li><button id="profile" class="btn btn-info" type="button">Profile</button></li>
                 <li><button id="signout" class="btn btn-danger" type="button">Sign out</button></li>
@@ -65,7 +66,9 @@
 
         <button id="cancel" type="button" class="btn btn-info">Cancel</button>
         <button id="submit" type="submit" class="btn btn-primary">Update</button>
-        <button id="image" type="button" class="btn btn-warning">User Image</button>
+        <button id="image" type="button" class="btn btn-warning">User Portrait</button>
+        <button id="lifeimage" type="button" class="btn btn-warning">User Image Gallery</button>
+        <button id="lifeimagedrag" type="button" class="btn btn-warning">User Image Gallery Drag</button>
       </form>
 
     </div>
@@ -85,6 +88,14 @@
 
     $('#image').on('click', function () {
         window.location.href = "/ccw/main/image";
+      });
+
+    $('#lifeimage').on('click', function () {
+        window.location.href = "/ccw/main/imagegallery";
+      });
+
+    $('#lifeimagedrag').on('click', function () {
+        window.location.href = "/ccw/main/imagegallerydrag";
       });
 
      $('#cancel').on('click', function () {
@@ -111,6 +122,50 @@
                 }
             });
       });
+
+    function startTime()
+
+        {
+
+            var today = new Date();
+
+            var yyyy = today.getFullYear();
+
+            var MM = today.getMonth() + 1;
+
+            var dd = today.getDate();
+
+            var hh = today.getHours();
+
+            var mm = today.getMinutes();
+
+            var ss = today.getSeconds();
+
+            MM = checkTime(MM);
+
+            dd = checkTime(dd);
+
+            mm = checkTime(mm);
+
+            ss = checkTime(ss);
+
+            document.getElementById('nowDateTimeSpan').innerHTML= yyyy+ "-" + MM + "-" + dd + " " + hh + ":" + mm + ":" + ss;
+
+            setTimeout('startTime()',1000);
+
+        }
+
+        function checkTime(i)
+
+        {
+            if (i<10){
+
+                i= "0" + i;
+
+            }
+
+              return i;
+        }
 
 </script>
 </body>
