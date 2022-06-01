@@ -7,6 +7,7 @@ import com.ccw.project.service.ThumbnailService;
 import com.ccw.project.system.OnlineControl;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.sun.org.apache.xpath.internal.operations.Mod;
+import org.apache.poi.hssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -654,6 +655,39 @@ public class MainController {
 
 
         return "usermanagement::users";
+    }
+
+    @RequestMapping("/ccw/main/export")
+    public void Export(HttpServletResponse response, HttpSession session) throws IOException {
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("User");
+
+        String fileName = "users"  + new Date() + ".xls";
+
+        int rowNum = 1;
+
+        String[] headers = { "id", "username", "email"};
+
+        HSSFRow row = sheet.createRow(0);
+
+        for(int i = 0;i <headers.length; i++){
+            HSSFCell cell = row.createCell(i);
+            HSSFRichTextString text = new HSSFRichTextString(headers[i]);
+            cell.setCellValue(text);
+        }
+
+        User user = (User) session.getAttribute("User");
+
+        HSSFRow row1 = sheet.createRow(rowNum);
+        row1.createCell(0).setCellValue(user.getId());
+        row1.createCell(1).setCellValue(user.getUsername());
+        row1.createCell(2).setCellValue(user.getEmail());
+
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+        response.flushBuffer();
+        workbook.write(response.getOutputStream());
     }
 
 }

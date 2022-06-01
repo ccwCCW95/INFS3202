@@ -84,6 +84,13 @@
             <version>0.4.8</version>
         </dependency>
 
+        <!-- POI -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.14</version>
+        </dependency>
+
     </dependencies>
 
     <build>

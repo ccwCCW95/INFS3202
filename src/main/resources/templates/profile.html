@@ -66,6 +66,7 @@
 
         <button id="cancel" type="button" class="btn btn-info">Cancel</button>
         <button id="submit" type="submit" class="btn btn-primary">Update</button>
+        <button id="exportexcel" type="button" class="btn btn-warning">Export Excel</button>
         <button id="image" type="button" class="btn btn-warning">User Portrait</button>
         <button id="lifeimage" type="button" class="btn btn-warning">User Image Gallery</button>
         <button id="lifeimagedrag" type="button" class="btn btn-warning">User Image Gallery Drag</button>
@@ -84,6 +85,10 @@
 
     $('#signout').on('click', function () {
         window.location.href = "/ccw/login/signout";
+      });
+
+    $('#exportexcel').on('click', function () {
+        window.location.href = "/ccw/main/export";
       });
 
     $('#image').on('click', function () {
